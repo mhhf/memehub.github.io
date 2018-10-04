@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>all</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="abstract">1. Abstract</h2>
+<blockquote>
+<p>Imagine if you could not only vote for reddit posts, but govern the entire platform with your interactions.</p>
+</blockquote>
+<p>With the emergence of decentral organizations such as Bitcoin, Ethereum or Applications written on top of Ethereum new forms of governance are needed to direct and evolve this organizations. Such schemas need to be transparent, fair (influence is directly proportional to the ownership), accessible (easy to interact with), extendable, proposed candidates have to be previewable, and verifiable and decissions have to be automatically enforcible. Currently this is still an unsolved problem. In this paper, we analyze the problem space and propose a schema which could serve as a building block in the roadmap to a full self-governance solution.</p>
+<p>In the presented method, governance is understood as the task for a group of <strong>actors</strong> (<strong>organization</strong>) with a clear <strong>ownership</strong> distribution to deterministically find a <strong>consensus</strong> out of a set of possible <strong>candidates</strong>.</p>
+<p>Efficient governance tries to optimize the amount of necessary interaction done by each actor to arrive at his desired and reachable state.</p>
+<p>The main idea is the tightly coupled relationship of user interactions such as voting and delegations statements with a meta data structure.</p>
+<p>The paper is structured in the following way: first we introduce the problem space and a general model for governance in 2. Based on this we introduce an extended model in 3. and discuss the role of data structures for governance, in particular those, which can be described with a regular grammar. In section 4 we present our current proof of concept implementation. In 5. an real world use case is given which illustrates the key value proposition of the presended model. In 4. we present the roadmap for further iterations. ## 2 general model</p>
+<h4 id="organization">2.1 organization</h4>
+<p>Suppose there is organization <span class="math inline">\(O\)</span> with is owned by Alice, Bob, Charlie and Dave who have agreed to find a name for it. This problem is kind of trivial, but we want to study it in depth to lay out the mathematical foundations behind it.</p>
+<center>
+<img src="A.svg" />
+</center>
+<p>Every person, who has impact on this decision is member of a set of <strong>owners</strong> mathematically represented as a set <span class="math inline">\(A\)</span>:</p>
+<p><span class="math display">\[A = \lbrace Alice, Bob, Charlie, Dave \rbrace\]</span></p>
+<p>The influence of each Member on this decision don’t has to be equal. Suppose there are 100 shares in total. The ownership of <strong>shares</strong> represents the influence each owner has on the outcome. We can define a share function which assigns each owner the number of shares he own.</p>
+<p><span class="math display">\[share: A \rightarrow \mathbb{N}\]</span></p>
+<p>The sum of all shares is called the <strong>size</strong> of this organization: <span class="math display">\[|O|: = \sum_{a \in A} share(a)\]</span></p>
+<p>In our example Alice has 40 shares which represents 40%, Bob 30, Charlie 20 and Dave 10.</p>
+<div id="chart1">
+
+</div>
+<p>Now everybody can propose a name:</p>
+<center>
+<img src="K.svg" />
+</center>
+We can call all proposals - <strong>candidates</strong>. Our final candidate set looks like the following:
+<center class="oneline">
+<span class="math inline">\(K=\lbrace &quot;Awesomecorp&quot;, &quot;omg\, systems&quot;,\)</span> <img src="cat.svg" /> <span class="math inline">\(\rbrace\)</span>
+</center>
+<p>Now every owner can rate each candidate:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Awesomecorp</th>
+<th>omg systems</th>
+<th><img src="cat.svg" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Alice</td>
+<td>1</td>
+<td>0.4</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Bob</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Charlie</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>Dave</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>The evaluation of the candidates by the owners can be represented by a <strong>vote</strong> function: <span class="math display">\[vote: A\times K \rightarrow [0,1]\]</span></p>
+<p>The organization now contains all information we need, to determine the actual winner:</p>
+<p>We define an organization state as a tuple: <span class="math display">\[O:=(A,K,&lt;,share,vote)\]</span> #### 2.2 consensus We can calculate the actual outcome by considering the votes for each candidate together with the shares of each voter:</p>
+<div id="chart">
+
+</div>
+<p>The winner candidate is “omg systems” with 2 shares ahead of “Awesomecorp”.</p>
+<p>Note here that its possible for two candidates to receive the same maximal value. (For example if charlie had voted 0.1 with 20 shares which would put “Awesomecorp” to 52 shares total.) In this case we need a system to decide which candidate actually has won: Since “Awesomecorp” was proposed before “omg systems”, we simply will take the oldest candidate with the maximum value: Mathematically speaking we need a strict total order over the candidates:</p>
+<p><span class="math display">\[&lt;\subset K\times K\]</span></p>
+<p>This approach gives us a <strong>consensus</strong> function, which is deterministic on every organization state:</p>
+<p><span class="math display">\[consens(O):= min_&lt;(\lbrace k\ |\ value(k) = \max_{k&#39;\in K}(value(k&#39;))\rbrace )\]</span> <span class="math display">\[value(k):=\sum_{a\in A} share(a)*vote(a,k)\]</span></p>
+<h3 id="delegations">delegations</h3>
+<p>In order to make voting more efficient we can bring in the concept of transitive voting (or delegation). Suppose in our scenario Dave don’t really have the time to evaluate all candidates in this difficult decisions. He also trusts his fried Bob to represent his interest, so he decides to delegate his vote to Bob. Now, every time bob votes or delegates, Daves votes will be taken in to account.</p>
+<center>
+<img src="D.svg" />
+</center>
+<p>Mathematically we define a delegation set: <span class="math display">\[D \subseteq A\times A\]</span></p>
+<p>And in our example Dave is delegating to Bob: <span class="math display">\[D=\lbrace  (Dave, Bob) \rbrace \]</span></p>
+<p>When we look again at our vote matrix, the result would look like this:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Awesomecorp</th>
+<th>omg systems</th>
+<th><img src="cat.svg" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Alice</td>
+<td>1</td>
+<td>0.4</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Bob</td>
+<td><strong>0</strong></td>
+<td><strong>1</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr class="odd">
+<td>Charlie</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>Dave</td>
+<td><strong>0</strong></td>
+<td><strong>1</strong></td>
+<td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p>In this example his delegation actually didn’t change the outcome but did had an effect on the overall rating of the candidates: Awesomecorp is rated with 40 shares and omg systems with 56 and <img src="cat.svg" /> with 20. ## 3 extended model</p>
+<h3 id="types">3.1 types</h3>
+<p>Did you notice what happened with Daves proposal? Didn’t the organization initially agree to decide on a name? And <img src="cat.svg" /> clearly isn’t one. This can be solved by a <strong>type</strong> system: An organization can be restricted to an underlaying structure: a set of types it will accepts as valid candidates denoted as <span class="math inline">\(\mathcal{L}\)</span>.</p>
+<p>A type of an element can be denoted with the colon notation. For example <span class="math inline">\(&quot;cat\,corp&quot;: String\)</span> states, that the candidate “cat corp” has the type String. Similarly we can say <img src="cat.svg" /> <span class="math inline">\(: Image\)</span>.</p>
+<p>In our example Dave couldn’t have proposed <img src="cat.svg" /> if the organization had the set of types or “<strong>language</strong>” <span class="math inline">\(\mathcal{L}_1=\lbrace String \rbrace\)</span>. However, it would be a valid candidate with the language <span class="math inline">\(\mathcal{L}_2=\lbrace String, Image\rbrace\)</span>. The proposed candidate has to satisfy just one of the <strong>alternatives</strong> in the set in order to be valid. Another notation form for alternatives is <span class="math inline">\(\mathcal{L}_2=(String | Image)\)</span>. For a language <span class="math inline">\(\mathcal{L}\)</span> we also adopt the colon notation to state that a candidate matches <em>one</em> of the types in the typeset: <span class="math inline">\(&quot;cat\,corp&quot;:\mathcal{L}_2\)</span> is valid.</p>
+<p>If an organization would want to find a match composed out of a name and a logo, they could have chosen the language <span class="math inline">\(\mathcal{L}_3=\lbrace (String, Image) \rbrace\)</span>. A valid candidate must to contain a String and an Image:</p>
+<p>e.g. <span class="math inline">\((&quot;catcorp&quot;,\)</span> <img src="cat.svg" /> <span class="math inline">\():\mathcal{L}_3\)</span> would be a valid.</p>
+<p>`;</p>
+<p>md_222 =` Note here that the type <span class="math inline">\((String, Image)\)</span> is a <strong>composition</strong> out of the type <span class="math inline">\(String\)</span> and the type <span class="math inline">\(Image\)</span>, so composing types is a valid operation to produce another type. We can write composition with the dot notation: <span class="math inline">\(String\cdot Image\)</span>.</p>
+<p>Also we want to allow the star operator for a language description: <span class="math inline">\(\mathcal{L}_4 = String*\)</span> states that the type <span class="math inline">\(String\)</span> can be composed arbitrary times: <span class="math inline">\(\mathcal{L}_4=\lbrace (), (String), (String, String), (String, String, String), ... \rbrace\)</span></p>
+<p>e.g. <span class="math inline">\((&quot;so&quot;, &quot;much&quot;, &quot;feature&quot;):\mathcal{L}_4\)</span> is valid.</p>
+<p>We can now use the operations (alternative, composition, star) to describe a complex structure of our organization!</p>
+<p>An example for a complex language is <span class="math inline">\(\mathcal{L}_5=(String, ( Image | String* ) )=\)</span>“WIP Name + Logo”:</p>
+<p>“Either a name and logo-sketch, or a name and a list of requirements for the logo”</p>
+<p>Which can be understood as the language:</p>
+<p><span class="math inline">\(\mathcal{L}_5=\lbrace (String, Image), (String), (String,String), (String, String, Sting), ... \rbrace\)</span></p>
+<p>So the statement: <span class="math inline">\((&quot;Catcorp&quot;, &quot;Black\, and\, White\, Image&quot;): \mathcal{L}_5\)</span> is valid. ### 3.2 regular grammar In theoretical computer science a description schema to produce a language is a grammar, in our case a regular grammar.</p>
+<p>A regular grammar is a composition out of the rules: concatenation, alternative and Kleene. Formally it is: * set of terminals <span class="math inline">\(T\)</span> (types: e.g. String, Image, Boolean, Number, …) * set of nonterminals <span class="math inline">\(N\)</span> (Contexts - such as &quot;UI&quot;, &quot;NameContext&quot;, etc. ) * start rule <span class="math inline">\(S\)</span>, which has to be a Nonterminal (e.g. &quot;Start&quot;) * set of production rules in one of the following forms: <span class="math inline">\(P \rightarrow t P&#39;\)</span>, <span class="math inline">\(P \rightarrow t\)</span> or <span class="math inline">\(P \rightarrow \varepsilon\)</span> (<span class="math inline">\(\varepsilon\)</span> is the empty production)</p>
+<p>The &quot;WIP Name + Logo&quot; language looks like following in a grammar description <span class="math inline">\(G\)</span>:</p>
+<p class="eq">
+<span class="math inline">\(T = \lbrace String, Image \rbrace\)</span> <span class="math inline">\(N = \lbrace Start, ImageCtx, ImageDescriptionCtx \rbrace\)</span> <span class="math inline">\(S = Start\)</span> <span class="math inline">\(P = \lbrace\)</span> $ Start String ImageCtx, $ $ Start StringImageDescriptionCtx, $ $ ImageCtx Image, $ $ ImageDescriptionCtx String ImageDescriptionCtx, $ $ ImageDescriptionCtx $ $ $
+</p>
+<p>The grammar is a way to describe the language, by starting with the Start rule and following the production rules untill the end. With this one can proof or disproof the validity of a candidate.</p>
+<p>For example the type: <span class="math inline">\((String\cdot String)\)</span> can be prooven via:</p>
+<p class="eq">
+<p><span class="math inline">\(Start\)</span></p>
+<p>$StringImageDescriptionCtx $</p>
+<p>$StringStringImageDescriptionCtx $</p>
+$StringString $
+</p>
+<p>This is also a <strong>proof</strong> for the candidate: <span class="math inline">\(&quot;Catcorp&quot; \cdot &quot;Black\, and\, White\, Image&quot;\)</span>.</p>
+<p>We can restrict an organization to a grammar: <span class="math inline">\(O_G\)</span> which will handle the candidate validation. ### 3.3 context The nonterminals of a grammar can also be interpreted as a named context. This is handy for context based statements such as <strong>contextual delegations</strong>.</p>
+<p>Imagine in our organization in the “WIP Name + Logo” language Alice is aware about her terrible decision making for Logos. Here she can delegate her votes only in the context of ImageCtx to Charlie. Anyone still can make proposals, but Dave has a voting weight in the context of ImageCtx of 50%. In another context (like ImageDescriptionCtx) he still only has his initial voting weight of 10%.</p>
+<p>Also imagine that Bob thinks that at the current status, images should’t be considered at all. He also likes the name “OMG Systems” so he votes 0.8 for the <span class="math inline">\(&quot;OMG\, Systems&quot;\cdot ImageDescriptionCtx\)</span>. With this statement all candidates which can be derived out of this context by using the production of the organization will receive his vote. Note that also future coming candidates automatically receives his vote! This is called <strong>contextual voting</strong>.</p>
+<p>Lets see how our voting table looks</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>(“OMG Systems”)</th>
+<th>(“cat corp”, “Black and White Image”)</th>
+<th>(“cat corp” ,<img src="cat.svg" />)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Alice</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Bob</td>
+<td>0.8</td>
+<td>0.8</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Charlie</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>Dave</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td><strong>total</strong></td>
+<td><span class="math inline">\(0.8*30+1*20=44\)</span></td>
+<td><span class="math inline">\(1 * 40 + 0.8 * 30 = 62\)</span></td>
+<td><span class="math inline">\(1 * (10 + 40) + 20 = 70\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Our consensus candidate is therefore the last candidate. ### 3.4 evolutions</p>
+<p>In the previous examples the organization started with the Grammar “Name” and <strong>evolved</strong> into an organization of the type “WIP Name + Logo”. It made this transition by changing the grammar and by porting <em>some</em> of the candidates and possibly making other adjustments.</p>
+<p>We can define an Evolution formally by a mapping from one organizational state to another: <span class="math display">\[evolution := O_{G_1} \rightarrow O_{G_2}\]</span></p>
+<p>This takes a grammar which the organization is defined in (<span class="math inline">\(G_1\)</span>) and maps or filters all of its candidates to candidates which are valid in the grammar <span class="math inline">\(G_2\)</span>. It can also make other changes like minting new shares and giving them to the actor, who proposed the winning candidate or change votes and delegations. After the change, it takes the new grammar <span class="math inline">\(G_2\)</span> as its new foundation.</p>
+<p>Evolutions are a powerful tool and therefore are only applied when their votes hit a <span class="math inline">\(\frac{2}{3}\)</span> majority.</p>
+<p>The set of all defined grammars and evolution-schemas can be seen as a global knowledge base and a path from the current grammar representation to a desired as a “blueprint” or a “recipe” to arrive at the desired goal by following a step by step guide.</p>
+<center>
+<img src="ev.svg" />
+</center>
+<h3 id="interpretations">3.5 Interpretations</h3>
+<p>Interpretations are basically anything, which refers to a consensus of an organization in a <strong>fixed</strong> specific grammar. The interpretation generate a domain specific output based on the consensus candidate and the underlaying language of the linked organization.</p>
+<p>For example a candidate with the “Name” lananguage can be displayed in as a webpage header. The webpage would display “OMG Systems”, but this could change if the consensus becomes “cat corp” whithout ever changing the website. An interpretation also brings in an easy way to view the underlaying datastructure and therefore preview all proposed candidates before have to vote on them.</p>
+<p>An organization can also state its preferred representation: <span class="math inline">\((&quot;LandingPageData&quot;\cdot &quot;Theme&quot;)\)</span> is a valid type, where “LandigpageData” represents the type which describes all data of a landingpage such as name, description, logo image etc. and “Theme” is a representation pointer. ## 4. Implementation</p>
+<h3 id="data-structures">4.1 data structures</h3>
+To save space due to the linear structure of regular grammars, we can save all valid candidates, contextual votes and delevations in a prefix tree:
+<center>
+<img src="trie.png" />
+</center>
+<p>The tree is a compact representation, holding all nessecery information.</p>
+<p>Votes and delegations are inhereted to a “leaf” node where the transitive hull of delegations is computed. Its acting on the vote matrix complements the vote matrix (“add the delegated votes to the vote matrix for each actor which hasn’t voted for himself”). Now the known consensus function is used to compute the consensus candidate out of the leaf nodes.</p>
+<h3 id="architecture">4.2 architecture</h3>
+<p>The main part of an organisation is a contract on the ethereum blockchain described in 3.2.1. Users interact with the contract either through a command line interface or a graphical user interface described in 3.2.2.</p>
+<h3 id="on-chain">4.2.1 On chain</h3>
+<p>The current solidity contract can be found on <a href="https://github.com/mhhf/mem/blob/develop/src/contracts/sol/org.sol">github.com</a>. The code is under active development and in an experimental stage.</p>
+<center>
+<img src="actions.svg" />
+</center>
+<p>The core part of an organization is implemented on the Ethereum blockchain. A user can iteract with it by either: * <strong>createOrg</strong> creating a new organization * <strong>send</strong>: sending shares from the own account to another actor * <strong>propose</strong>: propose a new candidate * <strong>vote</strong>: vote for an existing candidate * <strong>delegate</strong>: delegate his votes to another actor in a particular context * <strong>getConsens</strong>: ask for the current consens * <strong>voteEvolution</strong>: vote on a evolution step for the organization</p>
+<h5 id="createorg">4.2.1.1 createOrg</h5>
+<p>this creates a new organization</p>
+<p>parameters: * bytes language: is a regular grammer * uint shares: initial size of the organization</p>
+<h4 id="send">4.2.1.2 send</h4>
+<p>sends shares from the own account to a given actor.</p>
+<p>parameters: * address to: the address of the actor who should receive the shares * uint value: the amount of shares to send</p>
+<h4 id="propose">4.2.1.3 propose</h4>
+<p>propose a new candidate</p>
+<p>parameters: * bytes data: serialized candidate data and context description * bytes type: serialized type description</p>
+<h4 id="vote">4.2.1.4 vote</h4>
+<p>votes for a node in a prefix trie</p>
+<p>parameters: * bytes32 nodeId: the id of the node * uint value: the rating of the node (0 - 1000)</p>
+<h4 id="delegate">4.2.1.5 delegate</h4>
+<p>delegates the vote to another actor for a given context</p>
+<p>parameters: * address to: the address of the delegate * bytes32 nodeId: the context - a node in the prefix trie</p>
+<h4 id="getconsens">4.2.1.6 getConsens</h4>
+<p>returns a leaf node id which can be used to resolve the actual type and data of the consens candidate</p>
+<h4 id="voteevolution">4.2.1.7 voteEvolution</h4>
+<p>vote for an evolution for this organization, if its not proposed, propose it first</p>
+<p>parameters: * bytes32 evolutionId: the id of the evolution * uint value: the rating of the evolution (0 - 1000)</p>
+<h3 id="off-chain">4.2.2 Off chain</h3>
+<p>Currently the off chain implementation is under active development and not in a working stage. The current experimental implementation can be found <a href="https://github.com/mhhf/mem/tree/develop">here</a>.</p>
+<h4 id="cli---command-line-interface">4.2.2.1 CLI - command line interface</h4>
+<p>Here we show an example interaction with the contract over a command line interface for the example shown in section 2.1:</p>
+<p>First the organization itself has to be created by one of the owners. Alice could do something like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> new startup --share 10000 --lang=short_simple_name</a></code></pre></div>
+<p>this creates an organzation with a temporary reference <em>startup</em>, alice receives an initial amount of <em>10000</em> shares and the language of this org is <em>short_simple_name</em> which is a reference to another org which decides on what a name should be, lets see what they’ve decided upon:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> get short_simple_name</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">{</span> <span class="ex">type</span>: <span class="st">&#39;string&#39;</span>, pattern: <span class="st">&#39;^[a-z ]{3,32}$&#39;</span> <span class="kw">}</span></a></code></pre></div>
+<p>Here it is a string between 3 and 32 characters which contains letters from a-z and a blank character.</p>
+<p>After the org is created alice wants to add its other owners, by transferring them their initial shares:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> send startup <span class="op">&lt;</span>bob<span class="op">&gt;</span> 3000</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="op">&gt;</span> <span class="ex">mem</span> send startup <span class="op">&lt;</span>charlie<span class="op">&gt;</span> 2000</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="op">&gt;</span> <span class="ex">mem</span> send startup <span class="op">&lt;</span>dave<span class="op">&gt;</span> 1000</a></code></pre></div>
+<p>Note that <em>&lt; bob &gt;, &lt; charlie &gt;, &lt; dave &gt;</em> are references for addresses of the actors.</p>
+<p>This creates our initial ownership distribution.</p>
+<p>Now every owner is able to do proposals as long as they are valid words of the language.</p>
+<p><strong>proposals</strong></p>
+<p>Alice propose <em>Awesomecorp</em>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> propose startup -s <span class="st">&quot;Awesomecorp&quot;</span></a></code></pre></div>
+<p>Bob proposes <em>omg systems</em>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> propose startup -s <span class="st">&quot;omg systems&quot;</span></a></code></pre></div>
+<p>And Dave tries to propose &lt;cat.png&gt; but fails because it is rejected by the language.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> propose startup ./cat.png</a></code></pre></div>
+<p><strong>voting</strong></p>
+<p>Now everybody votes( this shows only the case of Alice ):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> vote startup <span class="st">&quot;Awesomecorp&quot;</span> 1</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="op">&gt;</span> <span class="ex">mem</span> vote startup <span class="st">&quot;omg systems&quot;</span> 0.3</a></code></pre></div>
+<p><strong>consensus</strong></p>
+<p>Great. now after everybody voted on the candidates, we can see what the consensus of the decision was:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> get startup</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="ex">OMG</span> systems</a></code></pre></div>
+<p><strong>evolution</strong></p>
+<p>Now the organisation want to evolve: Fist we search for possible next evolution steps. Then we see which evolution is already proposed:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> evolution next startup</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="ex">name_to_wip_name_and_logo</span>     - Helps you to find a logo for your organisation, keeps only the consensus name</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="ex">name_to_simple_landing_page</span>   - A simple landing page provided do display provided features, keeps all names</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">  <span class="ex">business_model_canvas</span> - Helps you to find a business model for your organisation, removes all names</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="op">&gt;</span> <span class="ex">mem</span> evolution get startup</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">  <span class="ex">name_to_wip_name_and_logo</span> - 60%</a></code></pre></div>
+<p>Great, we want to find a logo next. Therefore we also vote for the evolution wip_name_and_logo</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="op">&gt;</span> <span class="ex">mem</span> evolution vote startup name_to_wip_name_and_logo 1000</a></code></pre></div>
+<p>This will trigger evolution as the new votes hit &gt; 66% and the new grammar of startup becomes wip_name_and_logo with a single candidate - “OMG systems”</p>
+<h4 id="gui---graphical-user-interface">4.2.2.1 GUI - graphical user interface</h4>
+<p>The GUI is not implemented yet, but its major components already defined. Here we will give an overview over them:</p>
+<p>Requirements for an first abstraction layer: 1. easy creation of languages 2. propose candidates 3. list, view, preview a candidate 4. vote for a candidate 5. delegate votes 6. send shares 7. view the current consensus candidate 8. vote for evolutions 9. easy creation of evolutions</p>
+<p>For the creation of a regular languages first we will take a subset of <a href="json-schema.org">JSON-schema</a>. JSON-schema is an easy readable and established standard for json type definition. A subset of Json-schemas, namely those which don’t contain recursive references, can be taken to produce a regular grammars. We will take this subset to produce arbitrary languages for organizations.</p>
+<p>Json Schemas are mainly used to validate json objects and to generate forms to view and manipulate valid objects. Therefore Json-Schemas are a great tool to use to satisfy the requirements 1, 2, 3, 4, 5, 7. To achieve even more simplicity for writing json schemas a form builder can be introduced such as <a href="https://github.com/Kinto/formbuilder">this</a> or one of many others. In section 7. is a demo of a Json-Schema, which produces an editable form and a regular grammar. For the tasks 6. and 8. custom GUI elements will be engineered. Evolution schemas (9.) will be created as solidity contracts, since they require complex operations, such as mapping and filtering the candidates and manipulating votes and delegations. ## 5 Example A real world example is the recent <a href="https://github.com/ethereum/EIPs/issues/20">discussion about a standard coin contract interface</a>. The discussion was held on different platforms in an unstructured way and therefore it took a long time for the community to form a consensus. Now other contract interface standardization discussions are held for verity other domains following the same unstructured process. The following is an example how a interface standardization could be implemented on top of the presented model.</p>
+<p>An organization can be formed around a specific api standardization task, in our case the coin/ tokens. They pick a grammar, which describes the application binary interface and the natspec documentation of every interface point. The language could looks like this:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="ex">standardABI</span>:=(Interface Natspec)<span class="ex">*</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="ex">Interface</span>:= FunctionName FunctionParameter* ReturnParameter*</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="ex">FunctionName</span> := string</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="ex">FunctionParameter</span> := Type Name</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="ex">ReturnParameter</span> := Type Name</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="ex">Type</span> := string</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="ex">Name</span> := string</a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="ex">NatSpec</span> := String</a></code></pre></div>
+<p>With this a structural discussion is possible. Candidates can be submitted in a clear fashion. Contexts like documentation can be delegated. The clear distribution of votes and shares makes the decision process transparent. Every program can link against this organization to use the consensus candidate <strong>before</strong> the organization agreed on a final consensus. The generation of common interpretations makes the candidate always reviewable and easy to work with, regardless of the specific standardization task:</p>
+<center>
+<img src="abi.svg" />
+</center>
+<h2 id="roadmap">6. Roadmap</h2>
+<p>This project is still in experimental stage. But all critical parts are already implemented. The roadmap is intended to give an list over required tasks for a publicly usable version. Those tasks are split in engineering tasks for which a clear description is given and conceptual tasks which are open in their nature.</p>
+<h3 id="engineering-tasks">engineering tasks</h3>
+<h4 id="gui-and-cli-3-weeks-for-usable-prototype-client">GUI and CLI (3 weeks for usable prototype client)</h4>
+<ul>
+<li>implementation</li>
+<li>documentation</li>
+</ul>
+<h4 id="evolutions-2-weeks-for-prototype">evolutions (2 weeks for prototype)</h4>
+<ul>
+<li>implementation</li>
+<li>documentation</li>
+</ul>
+<h4 id="interpretations-2-weeks-for-prototype">interpretations (2 weeks for prototype)</h4>
+<ul>
+<li>documentation</li>
+<li>easy to use api</li>
+<li>examples</li>
+</ul>
+<h4 id="tests-and-documentation-2.-weeks-for-prototype">tests and documentation (2. weeks for prototype)</h4>
+<ul>
+<li>reach a test coverage of 100%</li>
+<li>document the code</li>
+<li>easy to follow tutorial for cli/ gui covering every possible action</li>
+<li>easy and complex examples</li>
+</ul>
+<h4 id="initial-deploy">initial deploy</h4>
+<p>For an initial set of languages online schema databases such as <a href="http://schema.org/">schema.org</a> can be crawled and imported.</p>
+<h3 id="conceptual-tasks">conceptual tasks</h3>
+<h4 id="extendability-1-weeks---for-basic-implementation">extendability (1 weeks - ? for basic implementation)</h4>
+<ul>
+<li>delegational programming
+<ul>
+<li>votes don’t have to be delegated to a human actor, but can be delegated to an external contract, oracle or organization. Think about a contract which A-B tests the top rated consensus candidates and adjusts is own votes for them, basing on the results.</li>
+</ul></li>
+<li>in order to be able to adapt fast to future coming requirements, this system has to be as modular as possible. Therefore some time has to be spend in researching a modular architecture.</li>
+</ul>
+<h4 id="gui-for-meta-tasks">GUI for meta tasks</h4>
+<ul>
+<li>structural discussion for organizations
+<ul>
+<li>in order to be practical a governance schema has to provide a easy method to exchange meta information such as discussion about candidates, or evolutions, search, etc.</li>
+</ul></li>
+</ul>
+<h4 id="scalability">scalability</h4>
+<ul>
+<li>practically the actions done on ethereum are not well scalable. Here time needs to be comited to explore possible scaling possibilities. Possible solutions could include:
+<ul>
+<li>sidechain</li>
+<li>merkle trie challenge/ proof mechanism</li>
+</ul></li>
+</ul>
+<h4 id="incentivation-mechanisms">incentivation mechanisms</h4>
+<ul>
+<li>incentivation mechanisms such as rewarding actors for good proposals or penalize actors for inaction could provide an huge increase in value gain for organizations and therefore promote progress.</li>
+</ul>
+<h4 id="mlcfg">MLCFG</h4>
+<p>The presented concept is not only valid for regular grammars, but as well for metalinear contextfree grammers, which increases the expressibility. Exact implications are a open study subject.</p>
+<h4 id="other-enhancements">other enhancements</h4>
+<ul>
+<li>anonyme voting</li>
+<li>prevention of strategic voting through commitment based voting ## 7. sandbox</li>
+</ul>
+<p>The following is an example for json-schema homomorphisms. Try to insert an author into the header or try other modifications:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" data-line-number="1">  <span class="st">&quot;author&quot;</span>: <span class="kw">{</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">    <span class="st">&quot;type&quot;</span>: <span class="st">&quot;string&quot;</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="kw">}</span></a></code></pre></div>
+<h2 id="test">test</h2>
+<p>omg</p>
+</body>
+</html>

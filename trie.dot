@@ -1,0 +1,12 @@
+digraph trie {
+  graph [bgcolor=transparent]
+  b [label="\"OMG Systems\""];
+  aa, ab, b [shape=box];
+  a [label="\"cat corp\""]
+  aa [label="\"Black and white image\""];
+  ab [shape=box,image="cat.png", label=""];
+  Start -> b;
+  Start -> a -> aa;
+  a -> ab;
+}
+
